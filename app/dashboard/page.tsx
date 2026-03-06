@@ -18,22 +18,21 @@ import {
   TableRow,
 } from "@/components/ui/table";
 import {
-  LayoutDashboard,
-  Users,
   UserCheck,
   Clock,
-  LogOut,
   CircleCheck as CheckCircle,
   Circle as XCircle,
-  Menu,
-  X,
   Search,
   Plus,
   Trash2,
   RefreshCw,
   UserPlus,
+  Users,
+  LayoutDashboard,
 } from "lucide-react";
 import { dummyVisitors, Visitor } from "@/lib/auth";
+import Sidebar from "@/components/dashboard/Sidebar";
+import Navbar from "@/components/dashboard/Navbar";
 
 export default function DashboardPage() {
   const { user, logout, isLoading } = useAuth();
@@ -143,81 +142,8 @@ export default function DashboardPage() {
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-gray-50 to-blue-50">
-      <div className="lg:hidden fixed top-0 left-0 right-0 bg-white border-b border-gray-200 px-4 py-3 flex items-center justify-between z-50">
-        <h1 className="font-bold text-xl bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-          Visitor System
-        </h1>
-        <Button variant="ghost" size="icon" onClick={() => setSidebarOpen(!sidebarOpen)}>
-          {sidebarOpen ? <X /> : <Menu />}
-        </Button>
-      </div>
-
-      <div
-        className={`fixed inset-y-0 left-0 w-64 bg-white border-r border-gray-200 transform transition-transform duration-200 ease-in-out z-40 ${
-          sidebarOpen ? "translate-x-0" : "-translate-x-full"
-        } lg:translate-x-0`}>
-        <div className="h-full flex flex-col">
-          <div className="p-6 border-b border-gray-100">
-            <h1 className="text-2xl font-bold bg-gradient-to-r from-blue-600 to-cyan-600 bg-clip-text text-transparent">
-              Visitor System
-            </h1>
-            <p className="text-sm text-gray-500 mt-1">Management Dashboard</p>
-          </div>
-
-          <nav className="flex-1 p-4 space-y-2">
-            <button className="w-full flex items-center gap-3 px-4 py-3 rounded-xl bg-gradient-to-r from-blue-600 to-blue-700 text-white font-semibold transition-all shadow-md hover:shadow-lg">
-              <LayoutDashboard className="w-5 h-5" />
-              Dashboard
-            </button>
-            {user.role === "admin" && (
-              <>
-                <a
-                  href="/dashboard/visitor-management"
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
-                  <Users className="w-5 h-5" />
-                  Visitor Management
-                </a>
-                <a
-                  href="/dashboard/room-management"
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
-                  <Users className="w-5 h-5" />
-                  Room Management
-                </a>
-                <a
-                  href="/dashboard/user-management"
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
-                  <Users className="w-5 h-5" />
-                  User Management
-                </a>
-              </>
-            )}
-            {user.role === "visitor" && (
-              <>
-                <a
-                  href="/dashboard/myvisit"
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
-                  <Users className="w-5 h-5" />
-                  My Visits
-                </a>
-              </>
-            )}
-          </nav>
-
-          <div className="p-4 border-t border-gray-100">
-            <div className="bg-gradient-to-br from-blue-50 to-cyan-50 rounded-xl p-4 mb-3 shadow-sm">
-              <p className="text-sm font-semibold text-gray-900">{user.name}</p>
-              <p className="text-xs text-gray-600 mt-1">{user.email}</p>
-            </div>
-            <Button
-              onClick={logout}
-              variant="outline"
-              className="w-full justify-start gap-2 border-gray-200 hover:bg-red-50 hover:text-red-600 hover:border-red-200 rounded-xl font-medium">
-              <LogOut className="w-4 h-4" />
-              Sign Out
-            </Button>
-          </div>
-        </div>
-      </div>
+      <Navbar sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
+      <Sidebar currentPage="/dashboard" sidebarOpen={sidebarOpen} setSidebarOpen={setSidebarOpen} />
 
       {sidebarOpen && (
         <div
