@@ -194,16 +194,10 @@ export default function DashboardPage() {
             {user.role === "visitor" && (
               <>
                 <a
-                  href="/dashboard/user-dummy-visitor"
+                  href="/dashboard/myvisit"
                   className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
                   <Users className="w-5 h-5" />
                   My Visits
-                </a>
-                <a
-                  href="/dashboard/visitor-management"
-                  className="w-full flex items-center gap-3 px-4 py-3 rounded-xl text-gray-700 hover:bg-gray-100 transition-all font-medium">
-                  <Users className="w-5 h-5" />
-                  Visitor Management
                 </a>
               </>
             )}

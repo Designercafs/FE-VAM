@@ -41,6 +41,9 @@ export default function UserManagementPage() {
     if (!isLoading && !user) {
       router.push("/login");
     }
+    if (!isLoading && user && user.role !== "admin") {
+      router.push("/dashboard");
+    }
   }, [user, isLoading, router]);
 
   if (isLoading || !user) {
@@ -136,12 +139,6 @@ export default function UserManagementPage() {
               <UserCog className="w-5 h-5" />
               User Management
             </button>
-            <a
-              href="/dashboard/user-dummy-visitor"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
-              <UserCog className="w-5 h-5" />
-              User Dummy Visitor
-            </a>
           </nav>
 
           <div className="p-4 border-t border-gray-100">

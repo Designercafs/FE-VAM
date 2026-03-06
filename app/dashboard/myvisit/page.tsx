@@ -20,7 +20,7 @@ import {
 import { UserPlus, LogOut, Menu, X, Search, Trash2, RefreshCw } from "lucide-react";
 import { dummyVisitors, Visitor } from "@/lib/auth";
 
-export default function UserDummyVisitorPage() {
+export default function MyVisitPage() {
   const { user, logout, isLoading } = useAuth();
   const router = useRouter();
   const [visitors, setVisitors] = useState<Visitor[]>(dummyVisitors);
@@ -157,27 +157,9 @@ export default function UserDummyVisitorPage() {
               <UserPlus className="w-5 h-5" />
               Dashboard
             </a>
-            <a
-              href="/dashboard/visitor-management"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
-              <UserPlus className="w-5 h-5" />
-              Visitor Management
-            </a>
-            <a
-              href="/dashboard/room-management"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
-              <UserPlus className="w-5 h-5" />
-              Room Management
-            </a>
-            <a
-              href="/dashboard/user-management"
-              className="w-full flex items-center gap-3 px-4 py-3 rounded-lg text-gray-600 hover:bg-gray-50 transition-all">
-              <UserPlus className="w-5 h-5" />
-              User Management
-            </a>
             <button className="w-full flex items-center gap-3 px-4 py-3 rounded-lg bg-gradient-to-r from-blue-50 to-cyan-50 text-blue-700 font-medium transition-all">
               <UserPlus className="w-5 h-5" />
-              User Dummy Visitor
+              My Visit
             </button>
           </nav>
 
@@ -207,10 +189,8 @@ export default function UserDummyVisitorPage() {
       <div className="lg:ml-64 pt-16 lg:pt-0">
         <div className="p-6 lg:p-8 space-y-6">
           <div>
-            <h2 className="text-3xl font-bold text-gray-900">User Dummy Visitor</h2>
-            <p className="text-gray-600 mt-1">
-              Create and manage dummy visitor records for testing
-            </p>
+            <h2 className="text-3xl font-bold text-gray-900">My Visit</h2>
+            <p className="text-gray-600 mt-1">Manage your visitor requests and track your visits</p>
           </div>
 
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
@@ -280,10 +260,8 @@ export default function UserDummyVisitorPage() {
           {isAdding && (
             <Card className="shadow-sm border-blue-100">
               <CardHeader>
-                <CardTitle className="text-xl">Add New Dummy Visitor</CardTitle>
-                <CardDescription>
-                  Fill in the details to create a new dummy visitor record
-                </CardDescription>
+                <CardTitle className="text-xl">Add New Visit Request</CardTitle>
+                <CardDescription>Fill in the details to create a new visit request</CardDescription>
               </CardHeader>
               <CardContent>
                 <div className="space-y-4">
@@ -343,7 +321,7 @@ export default function UserDummyVisitorPage() {
                       onClick={handleAddVisitor}
                       className="bg-blue-600 hover:bg-blue-700 text-white">
                       <UserPlus className="w-4 h-4 mr-2" />
-                      Add Visitor
+                      Add Visit Request
                     </Button>
                     <Button variant="outline" onClick={() => setIsAdding(false)}>
                       Cancel
@@ -358,8 +336,8 @@ export default function UserDummyVisitorPage() {
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
                 <div>
-                  <CardTitle className="text-xl">Dummy Visitor List</CardTitle>
-                  <CardDescription>Manage dummy visitor records for testing</CardDescription>
+                  <CardTitle className="text-xl">My Visit List</CardTitle>
+                  <CardDescription>Manage your visitor requests</CardDescription>
                 </div>
                 <div className="flex gap-2">
                   <div className="relative">
@@ -376,7 +354,7 @@ export default function UserDummyVisitorPage() {
                       onClick={() => setIsAdding(true)}
                       className="bg-blue-600 hover:bg-blue-700 text-white">
                       <UserPlus className="w-4 h-4 mr-2" />
-                      Add Visitor
+                      Add Visit Request
                     </Button>
                   )}
                   <Button variant="outline" onClick={handleReset}>
