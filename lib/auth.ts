@@ -6,6 +6,14 @@ export interface User {
   role: 'admin' | 'visitor';
 }
 
+export interface Building {
+  id: string;
+  name: string;
+  address: string;
+  floors: number;
+  description: string;
+}
+
 export interface Visitor {
   id: string;
   name: string;
@@ -13,6 +21,7 @@ export interface Visitor {
   phone: string;
   company: string;
   purpose: string;
+  destination?: string; // Building/room destination
   checkIn: string;
   checkOut?: string;
   status: 'waiting' | 'approved' | 'rejected' | 'checked-out';
@@ -54,6 +63,7 @@ export const dummyVisitors: Visitor[] = [
     phone: '+62 812-3456-7890',
     company: 'Tech Corp',
     purpose: 'Business Meeting',
+    destination: 'Conference Room A',
     checkIn: '2024-03-05T09:00:00',
     status: 'approved',
   },
@@ -64,6 +74,7 @@ export const dummyVisitors: Visitor[] = [
     phone: '+62 813-9876-5432',
     company: 'Design Studio',
     purpose: 'Project Discussion',
+    destination: 'Meeting Room B',
     checkIn: '2024-03-05T10:30:00',
     status: 'waiting',
   },
@@ -74,6 +85,7 @@ export const dummyVisitors: Visitor[] = [
     phone: '+62 821-5555-4444',
     company: 'Innovation Labs',
     purpose: 'Partnership Meeting',
+    destination: 'Office 301',
     checkIn: '2024-03-05T14:00:00',
     status: 'approved',
   },
@@ -129,6 +141,30 @@ export const dummyRooms: Room[] = [
     facilities: ['Projector', 'Whiteboard', 'Video Conferencing', 'AC', 'Audio System', 'Computers'],
     status: 'maintenance',
     description: 'Training room with computer stations',
+  },
+];
+
+export const dummyBuildings: Building[] = [
+  {
+    id: '1',
+    name: 'Main Office Building',
+    address: '123 Business Street, Jakarta',
+    floors: 5,
+    description: 'Main corporate office building',
+  },
+  {
+    id: '2',
+    name: 'Tech Center',
+    address: '456 Innovation Avenue, Jakarta',
+    floors: 3,
+    description: 'Technology and research center',
+  },
+  {
+    id: '3',
+    name: 'Training Facility',
+    address: '789 Learning Road, Jakarta',
+    floors: 2,
+    description: 'Training and development facility',
   },
 ];
 

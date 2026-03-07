@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -27,6 +28,20 @@ export default function UserManagementPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterRole, setFilterRole] = useState<string>("all");
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState<{
+    name: string;
+    email: string;
+    password: string;
+    role: UserType["role"];
+  }>({
+    name: "",
+    email: "",
+    password: "",
+    role: "visitor",
+  });
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -56,6 +71,30 @@ export default function UserManagementPage() {
 
   const handleDelete = (id: string) => {
     setUsers(users.filter((u) => u.id !== id));
+  };
+
+  const handleAddUser = () => {
+    if (!formData.name || !formData.email || !formData.password) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    const newUser: UserType = {
+      id: Date.now().toString(),
+      name: formData.name,
+      email: formData.email,
+      password: formData.password,
+      role: formData.role,
+    };
+
+    setUsers([...users, newUser]);
+    setFormData({
+      name: "",
+      email: "",
+      password: "",
+      role: "visitor",
+    });
+    setIsAdding(false);
   };
 
   const getRoleBadge = (role: string) => {
@@ -151,6 +190,76 @@ export default function UserManagementPage() {
             </Card>
           </div>
 
+          {isAdding && (
+            <Card className="shadow-sm border-blue-100">
+              <CardHeader>
+                <CardTitle className="text-xl">Add New User</CardTitle>
+                <CardDescription>Fill in the details to create a new user</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name">Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="password">Password *</Label>
+                      <Input
+                        id="password"
+                        type="password"
+                        value={formData.password}
+                        onChange={(e) => setFormData({ ...formData, password: e.target.value })}
+                        placeholder="••••••••"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="role">Role *</Label>
+                      <select
+                        id="role"
+                        value={formData.role}
+                        onChange={(e) =>
+                          setFormData({ ...formData, role: e.target.value as UserType["role"] })
+                        }
+                        className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="visitor">Visitor</option>
+                        <option value="admin">Admin</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleAddUser}
+                      className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add User
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsAdding(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="shadow-sm border-blue-100">
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -176,7 +285,9 @@ export default function UserManagementPage() {
                     <option value="admin">Admin</option>
                     <option value="visitor">Visitor</option>
                   </select>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => setIsAdding(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add User
                   </Button>

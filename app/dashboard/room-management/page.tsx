@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -28,6 +29,24 @@ export default function RoomManagementPage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
   const [filterType, setFilterType] = useState<string>("all");
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState<{
+    name: string;
+    capacity: number;
+    floor: number;
+    type: Room["type"];
+    facilities: string[];
+    description: string;
+  }>({
+    name: "",
+    capacity: 10,
+    floor: 1,
+    type: "meeting" as Room["type"],
+    facilities: [],
+    description: "",
+  });
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -58,6 +77,49 @@ export default function RoomManagementPage() {
 
   const handleDelete = (id: string) => {
     setRooms(rooms.filter((r) => r.id !== id));
+  };
+
+  const handleAddRoom = () => {
+    if (!formData.name || !formData.description) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    const newRoom: Room = {
+      id: Date.now().toString(),
+      name: formData.name,
+      capacity: formData.capacity,
+      floor: formData.floor,
+      type: formData.type,
+      facilities: formData.facilities,
+      status: "available",
+      description: formData.description,
+    };
+
+    setRooms([...rooms, newRoom]);
+    setFormData({
+      name: "",
+      capacity: 10,
+      floor: 1,
+      type: "meeting",
+      facilities: [],
+      description: "",
+    });
+    setIsAdding(false);
+  };
+
+  const handleFacilityToggle = (facility: string) => {
+    if (formData.facilities.includes(facility)) {
+      setFormData({
+        ...formData,
+        facilities: formData.facilities.filter((f) => f !== facility),
+      });
+    } else {
+      setFormData({
+        ...formData,
+        facilities: [...formData.facilities, facility],
+      });
+    }
   };
 
   const getStatusBadge = (status: string) => {
@@ -187,6 +249,118 @@ export default function RoomManagementPage() {
             </Card>
           </div>
 
+          {isAdding && (
+            <Card className="shadow-sm border-blue-100">
+              <CardHeader>
+                <CardTitle className="text-xl">Add New Room</CardTitle>
+                <CardDescription>Fill in the details to create a new room</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name">Room Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="Conference Room A"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="capacity">Capacity *</Label>
+                      <Input
+                        id="capacity"
+                        type="number"
+                        value={formData.capacity}
+                        onChange={(e) =>
+                          setFormData({ ...formData, capacity: parseInt(e.target.value) || 10 })
+                        }
+                        placeholder="20"
+                        min="1"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="floor">Floor *</Label>
+                      <Input
+                        id="floor"
+                        type="number"
+                        value={formData.floor}
+                        onChange={(e) =>
+                          setFormData({ ...formData, floor: parseInt(e.target.value) || 1 })
+                        }
+                        placeholder="1"
+                        min="1"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="type">Room Type *</Label>
+                      <select
+                        id="type"
+                        value={formData.type}
+                        onChange={(e) =>
+                          setFormData({ ...formData, type: e.target.value as Room["type"] })
+                        }
+                        className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500">
+                        <option value="meeting">Meeting</option>
+                        <option value="conference">Conference</option>
+                        <option value="office">Office</option>
+                        <option value="other">Other</option>
+                      </select>
+                    </div>
+                  </div>
+                  <div>
+                    <Label htmlFor="description">Description *</Label>
+                    <Input
+                      id="description"
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      placeholder="Large conference room with modern facilities"
+                    />
+                  </div>
+                  <div>
+                    <Label>Facilities</Label>
+                    <div className="flex flex-wrap gap-2 mt-2">
+                      {[
+                        "Projector",
+                        "Whiteboard",
+                        "Video Conferencing",
+                        "AC",
+                        "Audio System",
+                        "Computers",
+                      ].map((facility) => (
+                        <button
+                          key={facility}
+                          type="button"
+                          onClick={() => handleFacilityToggle(facility)}
+                          className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${
+                            formData.facilities.includes(facility)
+                              ? "bg-blue-600 text-white"
+                              : "bg-gray-100 text-gray-700 hover:bg-gray-200"
+                          }`}>
+                          {facility}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleAddRoom}
+                      className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Room
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsAdding(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="shadow-sm border-blue-100">
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -223,7 +397,9 @@ export default function RoomManagementPage() {
                     <option value="office">Office</option>
                     <option value="other">Other</option>
                   </select>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => setIsAdding(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Room
                   </Button>

@@ -2,7 +2,15 @@
 
 import { useAuth } from "@/contexts/AuthContext";
 import { Button } from "@/components/ui/button";
-import { LogOut, LayoutDashboard, Users, UserPlus, Building2, UserCog } from "lucide-react";
+import {
+  LogOut,
+  LayoutDashboard,
+  Users,
+  UserPlus,
+  Building2,
+  UserCog,
+  Building as BuildingIcon,
+} from "lucide-react";
 
 interface SidebarProps {
   currentPage: string;
@@ -16,6 +24,7 @@ export default function Sidebar({ currentPage, sidebarOpen, setSidebarOpen }: Si
   const adminMenuItems = [
     { name: "Dashboard", href: "/dashboard", icon: LayoutDashboard },
     { name: "Visitor Management", href: "/dashboard/visitor-management", icon: Users },
+    { name: "Building Management", href: "/dashboard/building-management", icon: BuildingIcon },
     { name: "Room Management", href: "/dashboard/room-management", icon: Building2 },
     { name: "User Management", href: "/dashboard/user-management", icon: UserCog },
   ];

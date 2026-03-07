@@ -7,6 +7,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import {
   Table,
   TableBody,
@@ -23,7 +24,7 @@ import {
   Circle as XCircle,
   DoorOpen as CheckOut,
 } from "lucide-react";
-import { dummyVisitors, Visitor } from "@/lib/auth";
+import { dummyVisitors, Visitor, dummyRooms } from "@/lib/auth";
 import Sidebar from "@/components/dashboard/Sidebar";
 import Navbar from "@/components/dashboard/Navbar";
 
@@ -34,6 +35,17 @@ export default function VisitorManagementPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [searchTerm, setSearchTerm] = useState("");
   const [filterStatus, setFilterStatus] = useState<string>("all");
+  const [isAdding, setIsAdding] = useState(false);
+
+  // Form state
+  const [formData, setFormData] = useState({
+    name: "",
+    email: "",
+    phone: "",
+    company: "",
+    purpose: "",
+    destination: "",
+  });
 
   useEffect(() => {
     if (!isLoading && !user) {
@@ -82,6 +94,42 @@ export default function VisitorManagementPage() {
 
   const handleDelete = (id: string) => {
     setVisitors(visitors.filter((v) => v.id !== id));
+  };
+
+  const handleAddVisitor = () => {
+    if (
+      !formData.name ||
+      !formData.email ||
+      !formData.phone ||
+      !formData.company ||
+      !formData.purpose
+    ) {
+      alert("Please fill in all required fields");
+      return;
+    }
+
+    const newVisitor: Visitor = {
+      id: Date.now().toString(),
+      name: formData.name,
+      email: formData.email,
+      phone: formData.phone,
+      company: formData.company,
+      purpose: formData.purpose,
+      destination: formData.destination || undefined,
+      checkIn: new Date().toISOString(),
+      status: "waiting",
+    };
+
+    setVisitors([...visitors, newVisitor]);
+    setFormData({
+      name: "",
+      email: "",
+      phone: "",
+      company: "",
+      purpose: "",
+      destination: "",
+    });
+    setIsAdding(false);
   };
 
   const getStatusBadge = (status: string) => {
@@ -200,6 +248,97 @@ export default function VisitorManagementPage() {
             </Card>
           </div>
 
+          {isAdding && (
+            <Card className="shadow-sm border-blue-100">
+              <CardHeader>
+                <CardTitle className="text-xl">Add New Visitor</CardTitle>
+                <CardDescription>Fill in the details to register a new visitor</CardDescription>
+              </CardHeader>
+              <CardContent>
+                <div className="space-y-4">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="name">Name *</Label>
+                      <Input
+                        id="name"
+                        value={formData.name}
+                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
+                        placeholder="John Doe"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="email">Email *</Label>
+                      <Input
+                        id="email"
+                        type="email"
+                        value={formData.email}
+                        onChange={(e) => setFormData({ ...formData, email: e.target.value })}
+                        placeholder="john@example.com"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="phone">Phone *</Label>
+                      <Input
+                        id="phone"
+                        value={formData.phone}
+                        onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
+                        placeholder="+62 812-3456-7890"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="company">Company *</Label>
+                      <Input
+                        id="company"
+                        value={formData.company}
+                        onChange={(e) => setFormData({ ...formData, company: e.target.value })}
+                        placeholder="Tech Corp"
+                      />
+                    </div>
+                  </div>
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    <div>
+                      <Label htmlFor="purpose">Purpose *</Label>
+                      <Input
+                        id="purpose"
+                        value={formData.purpose}
+                        onChange={(e) => setFormData({ ...formData, purpose: e.target.value })}
+                        placeholder="Business Meeting"
+                      />
+                    </div>
+                    <div>
+                      <Label htmlFor="destination">Destination (Building/Room)</Label>
+                      <select
+                        id="destination"
+                        value={formData.destination}
+                        onChange={(e) => setFormData({ ...formData, destination: e.target.value })}
+                        className="px-3 py-2 border border-gray-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-blue-500 w-full">
+                        <option value="">Select Destination</option>
+                        {dummyRooms.map((room) => (
+                          <option key={room.id} value={room.name}>
+                            {room.name} (Floor {room.floor})
+                          </option>
+                        ))}
+                      </select>
+                    </div>
+                  </div>
+                  <div className="flex gap-2">
+                    <Button
+                      onClick={handleAddVisitor}
+                      className="bg-blue-600 hover:bg-blue-700 text-white">
+                      <Plus className="w-4 h-4 mr-2" />
+                      Add Visitor
+                    </Button>
+                    <Button variant="outline" onClick={() => setIsAdding(false)}>
+                      Cancel
+                    </Button>
+                  </div>
+                </div>
+              </CardContent>
+            </Card>
+          )}
+
           <Card className="shadow-sm border-blue-100">
             <CardHeader>
               <div className="flex flex-col md:flex-row md:items-center md:justify-between gap-4">
@@ -227,7 +366,9 @@ export default function VisitorManagementPage() {
                     <option value="rejected">Rejected</option>
                     <option value="checked-out">Checked Out</option>
                   </select>
-                  <Button className="bg-blue-600 hover:bg-blue-700 text-white">
+                  <Button
+                    className="bg-blue-600 hover:bg-blue-700 text-white"
+                    onClick={() => setIsAdding(true)}>
                     <Plus className="w-4 h-4 mr-2" />
                     Add Visitor
                   </Button>
@@ -242,6 +383,7 @@ export default function VisitorManagementPage() {
                       <TableHead className="font-semibold text-gray-700">Name</TableHead>
                       <TableHead className="font-semibold text-gray-700">Company</TableHead>
                       <TableHead className="font-semibold text-gray-700">Purpose</TableHead>
+                      <TableHead className="font-semibold text-gray-700">Destination</TableHead>
                       <TableHead className="font-semibold text-gray-700">Phone</TableHead>
                       <TableHead className="font-semibold text-gray-700">Check-in Time</TableHead>
                       <TableHead className="font-semibold text-gray-700">Check-out Time</TableHead>
@@ -262,6 +404,9 @@ export default function VisitorManagementPage() {
                         </TableCell>
                         <TableCell className="text-gray-700">{visitor.company}</TableCell>
                         <TableCell className="text-gray-700">{visitor.purpose}</TableCell>
+                        <TableCell className="text-gray-700 text-sm">
+                          {visitor.destination || "-"}
+                        </TableCell>
                         <TableCell className="text-gray-700 text-sm">{visitor.phone}</TableCell>
                         <TableCell className="text-gray-600 text-sm">
                           {new Date(visitor.checkIn).toLocaleString("en-US", {
